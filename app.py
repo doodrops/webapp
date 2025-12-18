@@ -130,7 +130,7 @@ class Activity(db.Model):
             'duration': self.duration,
             'notes': self.notes,
             'created_at': self.created_at.isoformat(),
-            'user_name': User.query.get(self.user_id).username
+            'user_name': db.session.get(User, self.user_id).username
         }
 
 
@@ -148,7 +148,7 @@ class Caretaker(db.Model):
     
     def to_dict(self):
         """Convert to dictionary for JSON response"""
-        user_name = User.query.get(self.user_id).username if self.user_id else 'Pending'
+        user_name = db.session.get(User, self.user_id).username if self.user_id else 'Pending'
         return {
             'id': self.id,
             'user_id': self.user_id,
@@ -163,7 +163,7 @@ class Caretaker(db.Model):
 @login_manager.user_loader
 def load_user(user_id):
     """Load user by ID"""
-    return User.query.get(int(user_id))
+    return db.session.get(User, int(user_id))
 
 
 # ============================================================================
@@ -262,7 +262,7 @@ def require_role(*roles):
 
 def owner_or_caretaker(pet_id):
     """Check if current user is owner or accepted caretaker of pet"""
-    pet = Pet.query.get(pet_id)
+    pet = db.session.get(Pet, pet_id)
     if not pet:
         return False
     
@@ -285,37 +285,33 @@ def owner_or_caretaker(pet_id):
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    """User registration"""
     if request.method == 'POST':
-        data = request.get_json() if request.is_json else request.form
-        
-        email = data.get('email', '').strip()
-        username = data.get('username', '').strip()
-        password = data.get('password', '')
-        role = data.get('role', 'owner')
-        
-        # Validate
-        if not email or not username or not password:
-            return jsonify({'error': 'Missing required fields'}), 400
-        
-        if User.query.filter_by(email=email).first():
-            return jsonify({'error': 'Email already registered'}), 400
-        
-        if User.query.filter_by(username=username).first():
-            return jsonify({'error': 'Username already taken'}), 400
-        
-        if role not in ['owner', 'caretaker', 'admin']:
-            role = 'owner'
-        
-        # Create user
-        user = User(email=email, username=username, role=role)
-        user.set_password(password)
-        
-        db.session.add(user)
-        db.session.commit()
-        
-        login_user(user)
-        return redirect(url_for('dashboard'))
+        try:
+            username = request.form.get('username')
+            email = request.form.get('email')
+            password = request.form.get('password')
+            
+            if not all([username, email, password]):
+                flash('All fields required', 'error')
+                return redirect(url_for('register'))
+            
+            if User.query.filter_by(email=email).first():
+                flash('Email already exists', 'error')
+                return redirect(url_for('register'))
+            
+            user = User(username=username, email=email)
+            user.set_password(password)
+            db.session.add(user)
+            db.session.commit()
+            
+            flash('Account created! Please login', 'success')
+            return redirect(url_for('login'))
+            
+        except Exception as e:
+            db.session.rollback()
+            print(f"❌ Register error: {e}")
+            flash(f'Error: {str(e)}', 'error')
+            return redirect(url_for('register'))
     
     return render_template('register.html')
 
@@ -343,7 +339,7 @@ def login():
     return render_template('login.html')
 
 
-@app.route('/logout')
+@app.route('/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
     """User logout"""
