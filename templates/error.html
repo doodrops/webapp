@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Error - DooDrop{% endblock %}
+
+{% block extra_css %}
+<style>
+    .error-container {
+        max-width: 600px;
+        margin: 3rem auto;
+        text-align: center;
+    }
+
+    .error-card {
+        background: white;
+        border-radius: 20px;
+        padding: 3rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .error-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+    }
+
+    .error-code {
+        font-size: 3rem;
+        font-weight: 700;
+        color: var(--coral);
+        margin-bottom: 0.5rem;
+        font-family: 'Fredoka', sans-serif;
+    }
+
+    .error-message {
+        font-size: 1.2rem;
+        color: var(--dark);
+        margin-bottom: 2rem;
+    }
+
+    .error-description {
+        color: var(--gray);
+        margin-bottom: 2rem;
+        line-height: 1.6;
+    }
+
+    .error-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .error-actions a {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="error-container">
+    <div class="error-card">
+        <div class="error-icon">🐾</div>
+        <div class="error-code">Oops!</div>
+        <p class="error-message">{{ error }}</p>
+        <p class="error-description">
+            Looks like something went wrong. Don't worry, our team is on the case!
+        </p>
+        <div class="error-actions">
+            <a href="/dashboard" class="btn">📊 Dashboard</a>
+            <a href="/pets" class="btn secondary">🐾 My Pets</a>
+            <a href="/" class="btn ghost">🏠 Home</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}Add Caretaker - DooDrop{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-container {
+        max-width: 600px;
+        margin: 2rem auto;
+    }
+
+    .form-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-card h1 {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .pet-info {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--coral) 100%);
+        color: white;
+        padding: 1rem;
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        font-weight: 600;
+    }
+
+    .info-box {
+        background: var(--light);
+        padding: 1rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+        border-left: 4px solid var(--teal);
+    }
+
+    .info-box strong {
+        color: var(--dark);
+    }
+
+    .form-group label {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .form-actions button,
+    .form-actions a {
+        flex: 1;
+        padding: 1rem;
+        font-size: 1rem;
+    }
+
+    .form-actions .btn.ghost {
+        background: var(--cream);
+        color: var(--dark);
+    }
+
+    @media (max-width: 768px) {
+        .form-container {
+            margin: 1rem;
+        }
+
+        .form-card {
+            padding: 1.5rem;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="form-card">
+        <h1>👥 Add Caretaker</h1>
+        <div class="pet-info">
+            🐾 {{ pet.name }}
+        </div>
+
+        {% if error %}
+        <div class="alert alert-error">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <div class="info-box">
+            <strong>How invitations work:</strong>
+            <p style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
+                <strong>If they have a DooDrop account:</strong> They're automatically added as a caretaker and can immediately see and help manage this pet.
+            </p>
+            <p style="margin-bottom: 0;">
+                <strong>If they don't have an account yet:</strong> An invitation is sent (we'll remind you to share the invitation). Once they create an account with that email, they'll automatically gain access to this pet.
+            </p>
+        </div>
+
+        <form method="POST">
+            <div class="form-group">
+                <label for="caretaker_email">Email of Person to Invite *</label>
+                <input 
+                    type="email" 
+                    id="caretaker_email" 
+                    name="caretaker_email" 
+                    placeholder="caretaker@example.com"
+                    required 
+                    autofocus
+                >
+                <small style="color: var(--gray); display: block; margin-top: 0.5rem;">
+                    The person must already have a DooDrop account
+                </small>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn">➕ Add Caretaker</button>
+                <a href="/pets/{{ pet.id }}" class="btn ghost">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,262 @@
+{% extends "base.html" %}
+
+{% block title %}{% if edit %}Edit{% else %}Log{% endif %} Activity - DooDrop{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-container {
+        max-width: 600px;
+        margin: 2rem auto;
+    }
+
+    .form-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-card h1 {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .pet-info {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--coral) 100%);
+        color: white;
+        padding: 1rem;
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        font-weight: 600;
+    }
+
+    .activity-type-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin: 1rem 0;
+    }
+
+    .activity-option {
+        position: relative;
+    }
+
+    .activity-option input {
+        display: none;
+    }
+
+    .activity-option label {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1.5rem;
+        border: 2px solid var(--cream);
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin: 0;
+        font-weight: 600;
+    }
+
+    .activity-option input:checked + label {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+    }
+
+    .activity-icon {
+        font-size: 2rem;
+    }
+
+    .duration-group {
+        display: none;
+        margin-top: 1rem;
+    }
+
+    .duration-group.active {
+        display: block;
+    }
+
+    .form-section {
+        margin-bottom: 2rem;
+    }
+
+    .form-section h3 {
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+        color: var(--dark);
+        border-bottom: 2px solid var(--cream);
+        padding-bottom: 0.5rem;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .form-actions button,
+    .form-actions a {
+        flex: 1;
+        padding: 1rem;
+        font-size: 1rem;
+    }
+
+    .form-actions .btn.ghost {
+        background: var(--cream);
+        color: var(--dark);
+    }
+
+    @media (max-width: 768px) {
+        .form-container {
+            margin: 1rem;
+        }
+
+        .form-card {
+            padding: 1.5rem;
+        }
+
+        .activity-type-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="form-card">
+        <h1>📝 {% if edit %}Edit{% else %}Log{% endif %} Activity</h1>
+        <div class="pet-info">
+            🐾 {{ pet.name }}
+        </div>
+
+        <form method="POST">
+            <div class="form-section">
+                <h3>Activity Type</h3>
+                <div class="activity-type-grid">
+                    {% for atype in activity_types %}
+                    <div class="activity-option">
+                        <input 
+                            type="radio" 
+                            id="activity-{{ atype }}" 
+                            name="activity_type" 
+                            value="{{ atype }}"
+                            {% if edit and activity.activity_type == atype %}checked{% endif %}
+                            {% if not edit and atype == 'walk' %}checked{% endif %}
+                            required
+                        >
+                        <label for="activity-{{ atype }}">
+                            <span class="activity-icon">
+                                {% if atype == 'walk' %}🚶
+                                {% elif atype == 'meal' %}🍽️
+                                {% elif atype == 'bathroom' %}💩
+                                {% else %}📌{% endif %}
+                            </span>
+                            <span>{{ atype|capitalize }}</span>
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>When?</h3>
+                <div class="form-group">
+                    <label for="timestamp">Date & Time *</label>
+                    <input 
+                        type="datetime-local" 
+                        id="timestamp" 
+                        name="timestamp" 
+                        value="{% if edit %}{{ activity.timestamp.strftime('%Y-%m-%dT%H:%M') }}{% else %}{{ now.strftime('%Y-%m-%dT%H:%M') if now else '' }}{% endif %}"
+                        required
+                    >
+                </div>
+
+                <div class="duration-group {% if edit and activity.activity_type == 'walk' %}active{% endif %}">
+                    <label for="duration">Duration (minutes)</label>
+                    <input 
+                        type="number" 
+                        id="duration" 
+                        name="duration" 
+                        value="{{ activity.duration if edit and activity.duration else '' }}"
+                        placeholder="e.g., 30"
+                        min="1"
+                        max="480"
+                    >
+                    <small style="color: var(--gray);">Only for walks</small>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Notes (Optional)</h3>
+                <div class="form-group">
+                    <textarea 
+                        id="notes" 
+                        name="notes" 
+                        placeholder="Any additional details... e.g., 'seemed tired', 'didn't eat much', etc."
+                    >{{ activity.notes if edit else '' }}</textarea>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn">
+                    {% if edit %}
+                    💾 Save Activity
+                    {% else %}
+                    ✅ Log Activity
+                    {% endif %}
+                </button>
+                <a href="/pets/{{ pet.id }}" class="btn ghost">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Show/hide duration field based on activity type
+    const activityRadios = document.querySelectorAll('input[name="activity_type"]');
+    const durationGroup = document.querySelector('.duration-group');
+    const durationInput = document.querySelector('#duration');
+
+    function updateDurationVisibility() {
+        const selected = document.querySelector('input[name="activity_type"]:checked')?.value;
+        if (selected === 'walk') {
+            durationGroup.classList.add('active');
+            durationInput.required = true;
+        } else {
+            durationGroup.classList.remove('active');
+            durationInput.required = false;
+            durationInput.value = '';
+        }
+    }
+
+    activityRadios.forEach(radio => {
+        radio.addEventListener('change', updateDurationVisibility);
+    });
+
+    // Set current time if not editing
+    {% if not edit %}
+    const timestampInput = document.querySelector('#timestamp');
+    if (!timestampInput.value) {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        timestampInput.value = `${year}-${month}-${day}T${hours}:${minutes}`;
+    }
+    {% endif %}
+
+    // Initialize duration visibility
+    updateDurationVisibility();
+</script>
+
+{% endblock %}

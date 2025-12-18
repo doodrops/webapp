@@ -1,0 +1,354 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - DooDrop{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-header {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--coral) 100%);
+        color: white;
+        padding: 3rem 2rem;
+        border-radius: 20px;
+        margin-bottom: 3rem;
+        box-shadow: 0 8px 32px rgba(255, 184, 4, 0.15);
+    }
+
+    .dashboard-header h1 {
+        color: white;
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .dashboard-header p {
+        font-size: 1.1rem;
+        opacity: 0.95;
+    }
+
+    .cta-group {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .cta-button {
+        background: white;
+        color: var(--primary);
+        padding: 0.75rem 1.5rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 700;
+        font-family: 'Fredoka', sans-serif;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+    }
+
+    .cta-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(255, 255, 255, 0.3);
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 15px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        text-align: center;
+        border-top: 4px solid var(--primary);
+    }
+
+    .stat-card:nth-child(2) {
+        border-top-color: var(--coral);
+    }
+
+    .stat-card:nth-child(3) {
+        border-top-color: var(--teal);
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--primary);
+        font-family: 'Fredoka', sans-serif;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+        color: var(--gray);
+        margin-top: 0.5rem;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 2rem;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    .empty-state-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+    }
+
+    .empty-state h2 {
+        color: var(--dark);
+        margin-bottom: 0.5rem;
+    }
+
+    .empty-state p {
+        color: var(--gray);
+        margin-bottom: 1.5rem;
+    }
+
+    .pets-section {
+        margin-bottom: 3rem;
+    }
+
+    .pets-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 2rem;
+    }
+
+    .pet-card {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .pet-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+    }
+
+    .pet-header {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--coral) 100%);
+        color: white;
+        padding: 2rem;
+        text-align: center;
+    }
+
+    .pet-icon {
+        font-size: 3rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .pet-name {
+        font-family: 'Fredoka', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .pet-species {
+        font-size: 0.9rem;
+        opacity: 0.9;
+        text-transform: capitalize;
+    }
+
+    .pet-body {
+        padding: 1.5rem;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .pet-info {
+        font-size: 0.9rem;
+        color: var(--gray);
+        margin-bottom: 1rem;
+    }
+
+    .pet-info strong {
+        color: var(--dark);
+    }
+
+    .pet-actions {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: auto;
+        flex-wrap: wrap;
+    }
+
+    .pet-actions a {
+        flex: 1;
+        min-width: 100px;
+        text-align: center;
+        padding: 0.5rem;
+        font-size: 0.85rem;
+    }
+
+    .recent-activities {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    .activity-item {
+        display: flex;
+        gap: 1rem;
+        padding: 1rem;
+        border-bottom: 1px solid var(--cream);
+        align-items: center;
+    }
+
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+
+    .activity-icon {
+        font-size: 1.5rem;
+        min-width: 40px;
+        text-align: center;
+    }
+
+    .activity-content {
+        flex: 1;
+    }
+
+    .activity-title {
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 0.25rem;
+    }
+
+    .activity-meta {
+        font-size: 0.85rem;
+        color: var(--gray);
+    }
+
+    .activity-time {
+        text-align: right;
+        font-size: 0.85rem;
+        color: var(--gray);
+    }
+
+    @media (max-width: 768px) {
+        .dashboard-header {
+            padding: 2rem 1.5rem;
+        }
+
+        .dashboard-header h1 {
+            font-size: 1.8rem;
+        }
+
+        .cta-group {
+            flex-direction: column;
+        }
+
+        .cta-button {
+            width: 100%;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .pets-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1>🐾 Welcome Back, {{ current_user.username }}!</h1>
+    <p>Here's your pet care dashboard</p>
+    {% if current_user.role in ['owner', 'admin'] %}
+    <div class="cta-group">
+        <a href="/pets/new" class="cta-button">+ Add New Pet</a>
+    </div>
+    {% endif %}
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-number">{{ pets|length }}</div>
+        <div class="stat-label">Total Pets</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ total_activities|default('0') }}</div>
+        <div class="stat-label">Activities Logged</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ current_user.role|capitalize }}</div>
+        <div class="stat-label">Account Type</div>
+    </div>
+</div>
+
+{% if pets %}
+<div class="pets-section">
+    <h2 class="section-title">Your Pets</h2>
+    <div class="pets-grid">
+        {% for pet in pets %}
+        <div class="pet-card">
+            <div class="pet-header">
+                <div class="pet-icon">
+                    {% if pet.species == 'dog' %}🐕
+                    {% elif pet.species == 'cat' %}🐈
+                    {% elif pet.species == 'bird' %}🦜
+                    {% elif pet.species == 'horse' %}🐴
+                    {% elif pet.species == 'freshwater fish' %}🐠
+                    {% else %}🐾{% endif %}
+                </div>
+                <p class="pet-name">{{ pet.name }}</p>
+                <p class="pet-species">{{ pet.species }}</p>
+            </div>
+            <div class="pet-body">
+                {% if pet.breed %}
+                <div class="pet-info">
+                    <strong>Breed:</strong> {{ pet.breed }}
+                </div>
+                {% endif %}
+                {% if pet.age %}
+                <div class="pet-info">
+                    <strong>Age:</strong> {{ pet.age }} year{{ 's' if pet.age != 1 else '' }}
+                </div>
+                {% endif %}
+                
+                <div class="pet-actions">
+                    <a href="/pets/{{ pet.id }}" class="btn" style="flex: 1;">View</a>
+                    {% if current_user.role in ['owner', 'admin'] or pet.owner_id == current_user.id %}
+                    <a href="/pets/{{ pet.id }}/edit" class="btn secondary" style="flex: 1;">Edit</a>
+                    {% endif %}
+                    {% if current_user.role in ['owner', 'caretaker'] %}
+                    <a href="/pets/{{ pet.id }}/activities/new" class="btn" style="flex: 1; background: var(--teal);">Log Activity</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% else %}
+<div class="empty-state">
+    <div class="empty-state-icon">🐾</div>
+    <h2>No Pets Yet</h2>
+    <p>Get started by adding your first pet to DooDrop!</p>
+    {% if current_user.role in ['owner', 'admin'] %}
+    <a href="/pets/new" class="btn">Add Your First Pet 🐕</a>
+    {% else %}
+    <p style="color: var(--gray); font-size: 0.9rem;">
+        Ask a pet owner to invite you to manage their pets!
+    </p>
+    {% endif %}
+</div>
+{% endif %}
+
+{% endblock %}

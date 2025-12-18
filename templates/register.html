@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block title %}Sign Up - DooDrop{% endblock %}
+
+{% block extra_css %}
+<style>
+    .auth-container {
+        max-width: 450px;
+        margin: 3rem auto;
+    }
+
+    .auth-card {
+        background: white;
+        border-radius: 20px;
+        padding: 3rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .auth-card h1 {
+        font-size: 2rem;
+        text-align: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .auth-card .subtitle {
+        text-align: center;
+        color: var(--gray);
+        margin-bottom: 2rem;
+        font-size: 0.95rem;
+    }
+
+    .form-group label {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .auth-card button {
+        width: 100%;
+        padding: 1rem;
+        font-size: 1.1rem;
+        margin-top: 1rem;
+    }
+
+    .auth-footer {
+        text-align: center;
+        margin-top: 1.5rem;
+        font-size: 0.95rem;
+    }
+
+    .auth-footer a {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .auth-footer a:hover {
+        text-decoration: underline;
+    }
+
+    .role-selection {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        margin: 1rem 0;
+    }
+
+    .role-option {
+        position: relative;
+    }
+
+    .role-option input {
+        display: none;
+    }
+
+    .role-option label {
+        display: block;
+        padding: 1rem;
+        text-align: center;
+        border: 2px solid var(--cream);
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin: 0;
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+
+    .role-option input:checked + label {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+    }
+
+    .role-description {
+        font-size: 0.75rem;
+        opacity: 0.7;
+        margin-top: 0.25rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <h1>🐾 Join DooDrop!</h1>
+        <p class="subtitle">Create your pet care account</p>
+
+        <form method="POST" action="/register">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input 
+                    type="text" 
+                    id="username" 
+                    name="username" 
+                    required 
+                    placeholder="petlovername"
+                    autofocus
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    required 
+                    placeholder="your@email.com"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    required 
+                    placeholder="••••••••"
+                >
+            </div>
+
+            <div class="form-group">
+                <label>Account Type</label>
+                <div class="role-selection">
+                    <div class="role-option">
+                        <input type="radio" id="role-owner" name="role" value="owner" checked required>
+                        <label for="role-owner">
+                            👤 Owner
+                            <div class="role-description">Manage pets</div>
+                        </label>
+                    </div>
+                    <div class="role-option">
+                        <input type="radio" id="role-caretaker" name="role" value="caretaker">
+                        <label for="role-caretaker">
+                            🤝 Caretaker
+                            <div class="role-description">Help with care</div>
+                        </label>
+                    </div>
+                    <div class="role-option">
+                        <input type="radio" id="role-admin" name="role" value="admin">
+                        <label for="role-admin">
+                            ⚙️ Admin
+                            <div class="role-description">Manage system</div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn">Create Account 🚀</button>
+        </form>
+
+        <div class="auth-footer">
+            Already have an account? <a href="/login">Log in here!</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+
+{% block title %}{% if edit %}Edit{{ else }}Add{% endif %} Pet - DooDrop{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-container {
+        max-width: 600px;
+        margin: 2rem auto;
+    }
+
+    .form-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-card h1 {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .form-card .subtitle {
+        color: var(--gray);
+        margin-bottom: 2rem;
+        font-size: 0.95rem;
+    }
+
+    .form-section {
+        margin-bottom: 2rem;
+    }
+
+    .form-section h3 {
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+        color: var(--dark);
+        border-bottom: 2px solid var(--cream);
+        padding-bottom: 0.5rem;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .form-actions button,
+    .form-actions a {
+        flex: 1;
+        padding: 1rem;
+        font-size: 1rem;
+    }
+
+    .form-actions .btn.ghost {
+        background: var(--cream);
+        color: var(--dark);
+    }
+
+    @media (max-width: 768px) {
+        .form-container {
+            margin: 1rem;
+        }
+
+        .form-card {
+            padding: 1.5rem;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="form-card">
+        <h1>
+            {% if edit %}
+            ✏️ Edit {{ pet.name }}
+            {% else %}
+            🐾 Add a New Pet
+            {% endif %}
+        </h1>
+        <p class="subtitle">
+            {% if edit %}
+            Update your pet's information
+            {% else %}
+            Tell us about your furry friend!
+            {% endif %}
+        </p>
+
+        <form method="POST">
+            <div class="form-section">
+                <h3>Basic Information</h3>
+
+                <div class="form-group">
+                    <label for="name">Pet's Name *</label>
+                    <input 
+                        type="text" 
+                        id="name" 
+                        name="name" 
+                        value="{{ pet.name if edit else '' }}"
+                        placeholder="e.g., Buddy, Whiskers, Nemo"
+                        required 
+                        autofocus
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="species">Species *</label>
+                    <select id="species" name="species" required>
+                        <option value="">Select a species...</option>
+                        {% for sp in species_list %}
+                        <option value="{{ sp }}" {% if edit and pet.species == sp %}selected{% endif %}>
+                            {{ sp|capitalize }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="breed">Breed</label>
+                    <input 
+                        type="text" 
+                        id="breed" 
+                        name="breed" 
+                        value="{{ pet.breed if edit else '' }}"
+                        placeholder="e.g., Golden Retriever, Siamese, etc."
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="age">Age (in years)</label>
+                    <input 
+                        type="number" 
+                        id="age" 
+                        name="age" 
+                        value="{{ pet.age if edit and pet.age else '' }}"
+                        placeholder="e.g., 3"
+                        min="0"
+                        max="50"
+                    >
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Additional Information</h3>
+
+                <div class="form-group">
+                    <label for="notes">Notes</label>
+                    <textarea 
+                        id="notes" 
+                        name="notes" 
+                        placeholder="Any special instructions, dietary needs, medical info, or fun facts about your pet..."
+                    >{{ pet.notes if edit else '' }}</textarea>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn">
+                    {% if edit %}
+                    💾 Save Changes
+                    {% else %}
+                    🎉 Create Pet
+                    {% endif %}
+                </button>
+                <a href="{% if edit %}/pets/{{ pet.id }}{% else %}/pets{% endif %}" class="btn ghost">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
