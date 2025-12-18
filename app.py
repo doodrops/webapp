@@ -26,6 +26,16 @@ SENDGRID_FROM_EMAIL = os.environ.get('SENDGRID_FROM_EMAIL', 'noreply@doodrop.app
 
 # Initialize extensions
 db = SQLAlchemy(app)
+
+# Auto-initialize database on startup
+with app.app_context():
+    try:
+        db.create_all()
+        print("✅ Database tables created")
+    except Exception as e:
+        print(f"⚠️ Database init error: {e}")
+        
+        
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
