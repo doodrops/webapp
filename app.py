@@ -3,7 +3,7 @@ DooDrop - Pet Care Tracking Web App
 A Flask application for managing pet care with multiple user roles
 """
 
-from flask import Flask, render_template, request, jsonify, session, redirect, url_for
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -12,6 +12,9 @@ from sendgrid.helpers.mail import Mail, Email, To, Content
 from datetime import datetime, timedelta
 import os
 from functools import wraps
+from werkzeug.utils import secure_filename
+import os
+from pathlib import Path
 
 app = Flask(__name__)
 
@@ -19,6 +22,17 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'doodrop-secret-dev-key-change-in-production')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///doodrop.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# File upload configuration
+UPLOAD_FOLDER = 'static/uploads/pets'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = MAX_FILE_SIZE
+
+# Create upload folder if it doesn't exist
+Path(UPLOAD_FOLDER).mkdir(parents=True, exist_ok=True)
 
 # SendGrid Configuration
 SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY')
@@ -79,6 +93,18 @@ class User(UserMixin, db.Model):
         caring_for = [c.pet for c in self.caretaker_assignments]
         return owned + caring_for
 
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def save_pet_image(file, pet_id):
+    """Save uploaded image and return filename"""
+    if file and file.filename and allowed_file(file.filename):
+        ext = file.filename.rsplit('.', 1)[1].lower()
+        filename = f'pet_{pet_id}.{ext}'
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(filepath)
+        return filename
+    return None
 
 class Pet(db.Model):
     """Pet model"""
@@ -89,6 +115,7 @@ class Pet(db.Model):
     age = db.Column(db.Integer)
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    image_filename = db.Column(db.String(255))  # Store image filename
     notes = db.Column(db.Text)
     
     # Relationships
@@ -104,7 +131,8 @@ class Pet(db.Model):
             'breed': self.breed,
             'age': self.age,
             'owner_id': self.owner_id,
-            'notes': self.notes
+            'notes': self.notes,
+            'image_filename': self.image_filename
         }
 
 
@@ -377,36 +405,30 @@ def pets_list():
 
 @app.route('/pets/new', methods=['GET', 'POST'])
 @login_required
-@require_role('owner', 'admin')
-def new_pet():
-    """Create new pet"""
+def add_pet():
     if request.method == 'POST':
-        data = request.get_json() if request.is_json else request.form
+        name = request.form.get('name')
+        species = request.form.get('species')
+        breed = request.form.get('breed')
+        age = request.form.get('age', type=int)
+        notes = request.form.get('notes')
         
-        name = data.get('name', '').strip()
-        species = data.get('species', '').strip()
-        breed = data.get('breed', '').strip()
-        age = data.get('age')
-        notes = data.get('notes', '').strip()
-        
-        if not name or not species:
-            return jsonify({'error': 'Name and species are required'}), 400
-        
-        pet = Pet(
-            name=name,
-            species=species,
-            breed=breed,
-            age=int(age) if age else None,
-            owner_id=current_user.id,
-            notes=notes
-        )
-        
+        pet = Pet(name=name, species=species, breed=breed, age=age, notes=notes, owner_id=current_user.id)
         db.session.add(pet)
         db.session.commit()
         
-        return redirect(url_for('pet_detail', pet_id=pet.id))
+        # Handle image upload
+        if 'image' in request.files:
+            file = request.files['image']
+            if file and allowed_file(file.filename):
+                filename = save_pet_image(file, pet.id)
+                pet.image_filename = filename
+                db.session.commit()
+        
+        flash('Pet added successfully!', 'success')
+        return redirect(url_for('pets_list'))
     
-    species_list = ['dog', 'cat', 'freshwater fish', 'bird', 'horse', 'other small animal']
+    species_list = ['dog', 'cat', 'fish', 'bird', 'horse', 'other']
     return render_template('pet_form.html', species_list=species_list)
 
 
@@ -446,6 +468,13 @@ def edit_pet(pet_id):
         pet.breed = data.get('breed', pet.breed).strip()
         pet.age = int(data.get('age')) if data.get('age') else pet.age
         pet.notes = data.get('notes', pet.notes).strip()
+        
+        # Handle image upload
+        if 'image' in request.files:
+            file = request.files['image']
+            if file and allowed_file(file.filename):
+                filename = save_pet_image(file, pet.id)
+                pet.image_filename = filename
         
         db.session.commit()
         

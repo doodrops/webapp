@@ -114,10 +114,27 @@
         margin-bottom: 3rem;
     }
 
+    .pets-section h2 {
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+        color: var(--dark);
+    }
+
     .pets-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
         gap: 2rem;
+    }
+
+    .pet-card-link {
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: block;
+    }
+
+    .pet-card-link:hover {
+        transform: translateY(-8px);
     }
 
     .pet-card {
@@ -131,33 +148,38 @@
     }
 
     .pet-card:hover {
-        transform: translateY(-5px);
         box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
     }
 
-    .pet-header {
+    .pet-image-container {
+        position: relative;
+        width: 100%;
+        height: 200px;
         background: linear-gradient(135deg, var(--primary) 0%, var(--coral) 100%);
-        color: white;
-        padding: 2rem;
-        text-align: center;
+        background-size: cover;
+        background-position: center;
+        overflow: hidden;
     }
 
-    .pet-icon {
-        font-size: 3rem;
-        margin-bottom: 0.5rem;
+    .pet-image-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
 
-    .pet-name {
-        font-family: 'Fredoka', sans-serif;
-        font-size: 1.5rem;
-        font-weight: 700;
-        margin: 0;
-    }
-
-    .pet-species {
-        font-size: 0.9rem;
-        opacity: 0.9;
-        text-transform: capitalize;
+    .pet-icon-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 2.5rem;
+        background: white;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
 
     .pet-body {
@@ -167,29 +189,78 @@
         flex-direction: column;
     }
 
+    .pet-name {
+        font-family: 'Fredoka', sans-serif;
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin: 0 0 0.5rem 0;
+        color: var(--dark);
+    }
+
+    .pet-species {
+        font-size: 0.9rem;
+        color: var(--gray);
+        margin: 0 0 1rem 0;
+        text-transform: capitalize;
+    }
+
     .pet-info {
         font-size: 0.9rem;
         color: var(--gray);
-        margin-bottom: 1rem;
+        margin-bottom: 0.75rem;
     }
 
     .pet-info strong {
         color: var(--dark);
+        font-weight: 600;
     }
 
     .pet-actions {
         display: flex;
-        gap: 0.75rem;
+        gap: 0.5rem;
         margin-top: auto;
         flex-wrap: wrap;
+        pointer-events: none;
     }
 
     .pet-actions a {
         flex: 1;
-        min-width: 100px;
+        min-width: 80px;
         text-align: center;
-        padding: 0.5rem;
+        padding: 0.6rem 0.5rem;
         font-size: 0.85rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        pointer-events: auto;
+    }
+
+    .pet-actions .btn-primary {
+        background: var(--primary);
+        color: white;
+    }
+
+    .pet-actions .btn-primary:hover {
+        background: #e6a500;
+    }
+
+    .pet-actions .btn-secondary {
+        background: var(--cream);
+        color: var(--dark);
+    }
+
+    .pet-actions .btn-secondary:hover {
+        background: #f0e6d9;
+    }
+
+    .pet-actions .btn-action {
+        background: var(--teal);
+        color: white;
+    }
+
+    .pet-actions .btn-action:hover {
+        background: #3a8a9e;
     }
 
     .recent-activities {
@@ -294,45 +365,50 @@
 
 {% if pets %}
 <div class="pets-section">
-    <h2 class="section-title">Your Pets</h2>
+    <h2>Your Pets</h2>
     <div class="pets-grid">
         {% for pet in pets %}
-        <div class="pet-card">
-            <div class="pet-header">
-                <div class="pet-icon">
-                    {% if pet.species == 'dog' %}🐕
-                    {% elif pet.species == 'cat' %}🐈
-                    {% elif pet.species == 'bird' %}🦜
-                    {% elif pet.species == 'horse' %}🐴
-                    {% elif pet.species == 'freshwater fish' %}🐠
-                    {% else %}🐾{% endif %}
+        <a href="/pets/{{ pet.id }}" class="pet-card-link">
+            <div class="pet-card">
+                <div class="pet-image-container" style="{% if pet.image_filename %}background-image: url('{{ url_for('static', filename='uploads/pets/' + pet.image_filename) }}');{% else %}background: linear-gradient(135deg, var(--primary) 0%, var(--coral) 100%);{% endif %}">
+                    <div class="pet-icon-badge">
+                        {% if pet.species == 'dog' %}🐕
+                        {% elif pet.species == 'cat' %}🐈
+                        {% elif pet.species == 'bird' %}🦜
+                        {% elif pet.species == 'horse' %}🐴
+                        {% elif pet.species == 'fish' or pet.species == 'freshwater fish' %}🐠
+                        {% else %}🐾{% endif %}
+                    </div>
                 </div>
-                <p class="pet-name">{{ pet.name }}</p>
-                <p class="pet-species">{{ pet.species }}</p>
-            </div>
-            <div class="pet-body">
-                {% if pet.breed %}
-                <div class="pet-info">
-                    <strong>Breed:</strong> {{ pet.breed }}
-                </div>
-                {% endif %}
-                {% if pet.age %}
-                <div class="pet-info">
-                    <strong>Age:</strong> {{ pet.age }} year{{ 's' if pet.age != 1 else '' }}
-                </div>
-                {% endif %}
-                
-                <div class="pet-actions">
-                    <a href="/pets/{{ pet.id }}" class="btn" style="flex: 1;">View</a>
-                    {% if current_user.role in ['owner', 'admin'] or pet.owner_id == current_user.id %}
-                    <a href="/pets/{{ pet.id }}/edit" class="btn secondary" style="flex: 1;">Edit</a>
+
+                <div class="pet-body">
+                    <p class="pet-name">{{ pet.name }}</p>
+                    <p class="pet-species">{{ pet.species }}</p>
+
+                    {% if pet.breed %}
+                    <div class="pet-info">
+                        <strong>Breed:</strong> {{ pet.breed }}
+                    </div>
                     {% endif %}
-                    {% if current_user.role in ['owner', 'caretaker'] %}
-                    <a href="/pets/{{ pet.id }}/activities/new" class="btn" style="flex: 1; background: var(--teal);">Log Activity</a>
+
+                    {% if pet.age %}
+                    <div class="pet-info">
+                        <strong>Age:</strong> {{ pet.age }} year{{ 's' if pet.age != 1 else '' }}
+                    </div>
                     {% endif %}
+
+                    <div class="pet-actions">
+                        <a href="/pets/{{ pet.id }}" class="btn-primary">View</a>
+                        {% if current_user.role in ['owner', 'admin'] or pet.owner_id == current_user.id %}
+                        <a href="/pets/{{ pet.id }}/edit" class="btn-secondary">Edit</a>
+                        {% endif %}
+                        {% if current_user.role in ['owner', 'caretaker'] %}
+                        <a href="/pets/{{ pet.id }}/activities/new" class="btn-action">Mark Activity</a>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
-        </div>
+        </a>
         {% endfor %}
     </div>
 </div>
