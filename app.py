@@ -7,7 +7,11 @@ from flask import Flask, render_template, request, jsonify, session, redirect, u
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from sendgrid import SendGridAPIClient
+# Make SendGrid optional
+try:
+    from sendgrid import SendGridAPIClient
+except ImportError:
+    SendGridAPIClient = None
 from sendgrid.helpers.mail import Mail, Email, To, Content
 from datetime import datetime, timedelta
 import os
