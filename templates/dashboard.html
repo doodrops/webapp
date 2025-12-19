@@ -121,47 +121,59 @@
     }
 
     .pets-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 2rem;
-    }
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: flex-start;
+}
 
     .pet-card-link {
-        text-decoration: none;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: block;
+        flex: 0 1 calc(33.333% - 1.5rem);
+        min-width: 280px;
+    }
+
+    @media (max-width: 1200px) {
+        .pet-card-link {
+            flex: 0 1 calc(50% - 1rem);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .pet-card-link {
+            flex: 0 1 100%;
+        }
     }
 
     .pet-card-link:hover {
-        transform: translateY(-8px);
+        transform: translateY(-12px);
     }
 
     .pet-card {
         background: white;
-        border-radius: 15px;
+        border-radius: 20px;
         overflow: hidden;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-        transition: all 0.3s ease;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        transition: box-shadow 0.3s ease;
         display: flex;
         flex-direction: column;
     }
 
     .pet-card:hover {
-        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
     }
 
-    .pet-image-container {
+    /* Image Section */
+    .pet-card-image {
         position: relative;
         width: 100%;
         height: 200px;
-        background: linear-gradient(135deg, var(--primary) 0%, var(--coral) 100%);
+        background: linear-gradient(135deg, #FF6B6B 0%, #FFB366 100%);
         background-size: cover;
         background-position: center;
         overflow: hidden;
     }
 
-    .pet-image-container img {
+    .pet-card-image img {
         width: 100%;
         height: 100%;
         object-fit: cover;
@@ -169,12 +181,12 @@
 
     .pet-icon-badge {
         position: absolute;
-        top: 10px;
-        right: 10px;
-        font-size: 2.5rem;
+        top: 12px;
+        right: 12px;
+        font-size: 2rem;
         background: white;
-        width: 50px;
-        height: 50px;
+        width: 45px;
+        height: 45px;
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -182,131 +194,106 @@
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
 
-    .pet-body {
+    /* Content Section */
+    .pet-card-content {
         padding: 1.5rem;
         flex: 1;
         display: flex;
         flex-direction: column;
+        min-height: 180px;
     }
 
-    .pet-name {
+    .pet-card-name {
         font-family: 'Fredoka', sans-serif;
-        font-size: 1.4rem;
+        font-size: 1.6rem;
         font-weight: 700;
-        margin: 0 0 0.5rem 0;
+        margin: 0 0 0.75rem 0;
         color: var(--dark);
+        line-height: 1.2;
     }
 
-    .pet-species {
-        font-size: 0.9rem;
-        color: var(--gray);
-        margin: 0 0 1rem 0;
-        text-transform: capitalize;
-    }
-
-    .pet-info {
-        font-size: 0.9rem;
-        color: var(--gray);
-        margin-bottom: 0.75rem;
-    }
-
-    .pet-info strong {
-        color: var(--dark);
-        font-weight: 600;
-    }
-
-    .pet-actions {
+    .pet-pills {
         display: flex;
         gap: 0.5rem;
-        margin-top: auto;
         flex-wrap: wrap;
-        pointer-events: none;
+        margin-bottom: 1rem;
+        min-height: 40px;
     }
 
-    .pet-actions a {
+    .pill {
+        display: inline-block;
+        background: rgba(0, 0, 0, 0.05);
+        color: var(--dark);
+        padding: 0.4rem 0.85rem;
+        border-radius: 25px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: capitalize;
+        border: 1.5px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .pill-species {
+        background: rgba(76, 175, 80, 0.15);
+        color: #2e7d32;
+        border-color: rgba(76, 175, 80, 0.4);
+    }
+
+    .pill-breed {
+        background: rgba(255, 184, 4, 0.15);
+        color: #f57f17;
+        border-color: rgba(255, 184, 4, 0.4);
+    }
+
+    .pill-age {
+        background: rgba(71, 154, 172, 0.15);
+        color: #00838f;
+        border-color: rgba(71, 154, 172, 0.4);
+    }
+
+    .pet-card-actions {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-top: auto;
+    }
+
+    .pet-card-actions a {
         flex: 1;
-        min-width: 80px;
+        min-width: 70px;
         text-align: center;
-        padding: 0.6rem 0.5rem;
-        font-size: 0.85rem;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.75rem;
         border-radius: 8px;
         text-decoration: none;
         font-weight: 600;
         transition: all 0.2s ease;
-        pointer-events: auto;
     }
 
-    .pet-actions .btn-primary {
+    .action-primary {
         background: var(--primary);
         color: white;
     }
 
-    .pet-actions .btn-primary:hover {
+    .action-primary:hover {
         background: #e6a500;
     }
 
-    .pet-actions .btn-secondary {
+    .action-secondary {
         background: var(--cream);
         color: var(--dark);
     }
 
-    .pet-actions .btn-secondary:hover {
+    .action-secondary:hover {
         background: #f0e6d9;
     }
 
-    .pet-actions .btn-action {
+    .action-teal {
         background: var(--teal);
         color: white;
     }
 
-    .pet-actions .btn-action:hover {
+    .action-teal:hover {
         background: #3a8a9e;
-    }
-
-    .recent-activities {
-        background: white;
-        border-radius: 15px;
-        padding: 2rem;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-    }
-
-    .activity-item {
-        display: flex;
-        gap: 1rem;
-        padding: 1rem;
-        border-bottom: 1px solid var(--cream);
-        align-items: center;
-    }
-
-    .activity-item:last-child {
-        border-bottom: none;
-    }
-
-    .activity-icon {
-        font-size: 1.5rem;
-        min-width: 40px;
-        text-align: center;
-    }
-
-    .activity-content {
-        flex: 1;
-    }
-
-    .activity-title {
-        font-weight: 600;
-        color: var(--dark);
-        margin-bottom: 0.25rem;
-    }
-
-    .activity-meta {
-        font-size: 0.85rem;
-        color: var(--gray);
-    }
-
-    .activity-time {
-        text-align: right;
-        font-size: 0.85rem;
-        color: var(--gray);
     }
 
     @media (max-width: 768px) {
@@ -332,6 +319,15 @@
 
         .pets-grid {
             grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .pet-card-image {
+            height: 180px;
+        }
+
+        .pet-card-name {
+            font-size: 1.4rem;
         }
     }
 </style>
@@ -370,7 +366,8 @@
         {% for pet in pets %}
         <a href="/pets/{{ pet.id }}" class="pet-card-link">
             <div class="pet-card">
-                <div class="pet-image-container" style="{% if pet.image_filename %}background-image: url('{{ url_for('static', filename='uploads/pets/' + pet.image_filename) }}');{% else %}background: linear-gradient(135deg, var(--primary) 0%, var(--coral) 100%);{% endif %}">
+                <!-- Image Section -->
+                <div class="pet-card-image" style="{% if pet.image_filename %}background-image: url('{{ url_for('static', filename='uploads/pets/' + pet.image_filename) }}');{% endif %}">
                     <div class="pet-icon-badge">
                         {% if pet.species == 'dog' %}🐕
                         {% elif pet.species == 'cat' %}🐈
@@ -381,29 +378,27 @@
                     </div>
                 </div>
 
-                <div class="pet-body">
-                    <p class="pet-name">{{ pet.name }}</p>
-                    <p class="pet-species">{{ pet.species }}</p>
-
-                    {% if pet.breed %}
-                    <div class="pet-info">
-                        <strong>Breed:</strong> {{ pet.breed }}
+                <!-- Content Section -->
+                <div class="pet-card-content">
+                    <h3 class="pet-card-name">{{ pet.name }}</h3>
+                    
+                    <div class="pet-pills">
+                        <span class="pill pill-species">{{ pet.species }}</span>
+                        {% if pet.breed %}
+                        <span class="pill pill-breed">{{ pet.breed }}</span>
+                        {% endif %}
+                        {% if pet.age is not none %}
+                        <span class="pill pill-age">{{ pet.age }} yr{{ 's' if pet.age != 1 else '' }}</span>
+                        {% endif %}
                     </div>
-                    {% endif %}
 
-                    {% if pet.age %}
-                    <div class="pet-info">
-                        <strong>Age:</strong> {{ pet.age }} year{{ 's' if pet.age != 1 else '' }}
-                    </div>
-                    {% endif %}
-
-                    <div class="pet-actions">
-                        <a href="/pets/{{ pet.id }}" class="btn-primary">View</a>
+                    <div class="pet-card-actions">
+                        <a href="/pets/{{ pet.id }}" class="action-primary">View</a>
                         {% if current_user.role in ['owner', 'admin'] or pet.owner_id == current_user.id %}
-                        <a href="/pets/{{ pet.id }}/edit" class="btn-secondary">Edit</a>
+                        <a href="/pets/{{ pet.id }}/edit" class="action-secondary">Edit</a>
                         {% endif %}
                         {% if current_user.role in ['owner', 'caretaker'] %}
-                        <a href="/pets/{{ pet.id }}/activities/new" class="btn-action">Mark Activity</a>
+                        <a href="/pets/{{ pet.id }}/activities/new" class="action-teal">Mark</a>
                         {% endif %}
                     </div>
                 </div>

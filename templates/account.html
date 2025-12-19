@@ -1,0 +1,473 @@
+{% extends "base.html" %}
+
+{% block title %}My Account - DooDrop{% endblock %}
+
+{% block extra_css %}
+<style>
+    .account-container {
+        max-width: 900px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .account-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .account-header h1 {
+        font-size: 2.5rem;
+        margin: 0;
+    }
+
+    /* Profile Card */
+    .profile-card {
+        background: white;
+        border-radius: 20px;
+        padding: 3rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+
+    .profile-header {
+        display: flex;
+        gap: 2rem;
+        align-items: flex-start;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid var(--cream);
+        margin-bottom: 2rem;
+    }
+
+    .avatar-section {
+        text-align: center;
+    }
+
+    .avatar-display {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        border: 4px solid var(--primary);
+        background: var(--cream);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 4rem;
+        margin: 0 auto 1rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+    }
+
+    .avatar-display img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .avatar-upload-label {
+        display: inline-block;
+        padding: 0.6rem 1.2rem;
+        background: var(--primary);
+        color: white;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        font-size: 0.9rem;
+    }
+
+    .avatar-upload-label:hover {
+        background: #e6a500;
+        transform: translateY(-2px);
+    }
+
+    .avatar-upload-input {
+        display: none;
+    }
+
+    .profile-info {
+        flex: 1;
+    }
+
+    .profile-info h2 {
+        font-size: 2rem;
+        margin: 0 0 0.5rem 0;
+        color: var(--dark);
+    }
+
+    .profile-email {
+        font-size: 1rem;
+        color: var(--gray);
+        margin-bottom: 1.5rem;
+    }
+
+    .profile-pills {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .profile-pill {
+        display: inline-block;
+        background: rgba(255, 184, 4, 0.15);
+        color: #f57f17;
+        padding: 0.5rem 1rem;
+        border-radius: 25px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        border: 1.5px solid rgba(255, 184, 4, 0.4);
+        text-transform: capitalize;
+    }
+
+    /* Form Section */
+    .account-form {
+        background: white;
+        border-radius: 20px;
+        padding: 3rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+
+    .account-form h2 {
+        font-size: 1.8rem;
+        margin: 0 0 2rem 0;
+        color: var(--dark);
+        border-bottom: 3px solid var(--primary);
+        padding-bottom: 0.75rem;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .form-grid.full {
+        grid-template-columns: 1fr;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group label {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--dark);
+        font-size: 0.95rem;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        padding: 0.75rem 1rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-family: inherit;
+        transition: border 0.2s ease;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(255, 184, 4, 0.1);
+    }
+
+    .form-group textarea {
+        resize: vertical;
+        min-height: 100px;
+    }
+
+    .form-help-text {
+        font-size: 0.85rem;
+        color: var(--gray);
+        margin-top: 0.25rem;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--cream);
+    }
+
+    .form-actions a,
+    .form-actions button {
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
+        font-size: 0.95rem;
+    }
+
+    .btn-primary {
+        background: var(--primary);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #e6a500;
+        transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+        background: var(--cream);
+        color: var(--dark);
+        border: 2px solid var(--primary);
+    }
+
+    .btn-secondary:hover {
+        background: var(--primary);
+        color: white;
+    }
+
+    .btn-danger {
+        background: #fee;
+        color: #c33;
+        border: 2px solid #c33;
+    }
+
+    .btn-danger:hover {
+        background: #c33;
+        color: white;
+    }
+
+    /* Account Actions */
+    .account-actions {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .account-actions h2 {
+        font-size: 1.5rem;
+        margin: 0 0 1.5rem 0;
+        color: var(--dark);
+    }
+
+    .action-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .action-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.5rem;
+        background: var(--cream);
+        border-radius: 10px;
+        border-left: 4px solid var(--primary);
+    }
+
+    .action-item h3 {
+        margin: 0 0 0.25rem 0;
+        font-size: 1rem;
+        color: var(--dark);
+    }
+
+    .action-item p {
+        margin: 0;
+        font-size: 0.9rem;
+        color: var(--gray);
+    }
+
+    .action-item a {
+        padding: 0.6rem 1.2rem;
+        background: var(--primary);
+        color: white;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        font-size: 0.9rem;
+    }
+
+    .action-item a:hover {
+        background: #e6a500;
+        transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+        .account-container {
+            margin: 1rem auto;
+        }
+
+        .profile-card {
+            padding: 1.5rem;
+        }
+
+        .profile-header {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .avatar-section {
+            width: 100%;
+        }
+
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .form-actions a,
+        .form-actions button {
+            width: 100%;
+        }
+
+        .account-form {
+            padding: 1.5rem;
+        }
+
+        .action-item {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .action-item a {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="account-container">
+    <div class="account-header">
+        <h1>⚙️ My Account</h1>
+        <a href="/dashboard" class="btn">← Back to Dashboard</a>
+    </div>
+
+    <!-- Profile Card -->
+    <div class="profile-card">
+        <div class="profile-header">
+            <!-- Avatar Section -->
+            <div class="avatar-section">
+                <div class="avatar-display">
+                    {% if current_user.avatar_filename %}
+                    <img src="{{ url_for('static', filename='uploads/avatars/' + current_user.avatar_filename) }}" alt="{{ current_user.username }}">
+                    {% else %}
+                    👤
+                    {% endif %}
+                </div>
+                <form id="avatar-form" style="display: none;" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="action" value="upload_avatar">
+                    <input type="file" id="avatar-input" name="avatar" accept="image/*">
+                </form>
+                <label for="avatar-input" class="avatar-upload-label">📸 Change Avatar</label>
+            </div>
+
+            <!-- Profile Info -->
+            <div class="profile-info">
+                <h2>{{ current_user.username }}</h2>
+                <p class="profile-email">{{ current_user.email }}</p>
+                <div class="profile-pills">
+                    <span class="profile-pill">{{ current_user.role }}</span>
+                    <span class="profile-pill">Member since {{ current_user.created_at.strftime('%b %Y') }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Profile Form -->
+    <div class="account-form">
+        <h2>📝 Profile Information</h2>
+        
+        <form method="POST">
+            <input type="hidden" name="action" value="update_profile">
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" value="{{ current_user.username }}" required>
+                    <p class="form-help-text">Your unique username (can contain letters, numbers, underscores)</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" value="{{ current_user.email }}" required>
+                    <p class="form-help-text">We'll use this to contact you about your account</p>
+                </div>
+            </div>
+
+            <div class="form-grid full">
+                <div class="form-group">
+                    <label for="location">Location</label>
+                    <input type="text" id="location" name="location" placeholder="e.g., San Francisco, CA" value="{{ current_user.location if current_user.location else '' }}">
+                    <p class="form-help-text">Where you and your pets are located</p>
+                </div>
+            </div>
+
+            <div class="form-grid full">
+                <div class="form-group">
+                    <label for="bio">Bio</label>
+                    <textarea id="bio" name="bio" placeholder="Tell other pet owners about yourself...">{{ current_user.bio if current_user.bio else '' }}</textarea>
+                    <p class="form-help-text">A short bio (optional - visible to caretakers)</p>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">💾 Save Changes</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Account Actions -->
+    <div class="account-actions">
+        <h2>⚙️ Account Settings</h2>
+        
+        <div class="action-list">
+            <div class="action-item">
+                <div>
+                    <h3>Change Password</h3>
+                    <p>Update your password to keep your account secure</p>
+                </div>
+                <a href="/account/change-password">Change Password</a>
+            </div>
+
+            <div class="action-item">
+                <div>
+                    <h3>Connected Accounts</h3>
+                    <p>Manage devices and login sessions</p>
+                </div>
+                <a href="#" style="background: var(--gray);">Coming Soon</a>
+            </div>
+
+            <div class="action-item">
+                <div>
+                    <h3>Delete Account</h3>
+                    <p>Permanently delete your account and all your data</p>
+                </div>
+                <a href="#" class="btn-danger" style="background: #fee; color: #c33; border: none;">Delete Account</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Handle avatar upload
+    document.getElementById('avatar-input').addEventListener('change', function() {
+        document.getElementById('avatar-form').submit();
+    });
+
+    document.querySelector('.avatar-upload-label').addEventListener('click', function() {
+        document.getElementById('avatar-input').click();
+    });
+</script>
+{% endblock %}

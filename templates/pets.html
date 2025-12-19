@@ -26,9 +26,46 @@
         padding: 0.75rem 1.5rem;
     }
 
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 15px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        text-align: center;
+        border-top: 4px solid var(--primary);
+    }
+
+    .stat-card:nth-child(2) {
+        border-top-color: var(--coral);
+    }
+
+    .stat-card:nth-child(3) {
+        border-top-color: var(--teal);
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--primary);
+        font-family: 'Fredoka', sans-serif;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+        color: var(--gray);
+        margin-top: 0.5rem;
+    }
+
     .pets-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
         gap: 2rem;
         margin-bottom: 2rem;
     }
@@ -38,6 +75,7 @@
         cursor: pointer;
         transition: all 0.3s ease;
         display: block;
+        height: 100%;
     }
 
     .pet-card-link:hover {
@@ -45,75 +83,104 @@
     }
 
     .pet-card {
-        background-size: cover;
-        background-position: center;
+        background: white;
         border-radius: 20px;
         overflow: hidden;
-        min-height: 320px;
-        position: relative;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         transition: box-shadow 0.3s ease;
         display: flex;
         flex-direction: column;
-        justify-content: flex-end;
+        height: 100%;
     }
 
     .pet-card:hover {
-        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
     }
 
-    .pet-card-overlay {
+    /* Image Section */
+    .pet-card-image {
         position: relative;
         width: 100%;
-        background: linear-gradient(to top, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.7), transparent);
-        padding: 2rem 1.5rem 1.5rem;
-        color: white;
+        height: 200px;
+        background: linear-gradient(135deg, #FF6B6B 0%, #FFB366 100%);
+        background-size: cover;
+        background-position: center;
+        overflow: hidden;
     }
 
-    .pet-card-header {
-        margin-bottom: 1rem;
+    .pet-card-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
 
-    .pet-card-overlay h3 {
-        margin: 0 0 0.5rem 0;
-        font-size: 1.8rem;
-        font-weight: bold;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    .pet-icon-badge {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        font-size: 2rem;
+        background: white;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Content Section */
+    .pet-card-content {
+        padding: 1.5rem;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .pet-card-name {
+        font-family: 'Fredoka', sans-serif;
+        font-size: 1.6rem;
+        font-weight: 700;
+        margin: 0 0 0.75rem 0;
+        color: var(--dark);
+        line-height: 1.2;
     }
 
     .pet-pills {
         display: flex;
         gap: 0.5rem;
         flex-wrap: wrap;
-        margin-top: 0.75rem;
+        margin-top: auto;
     }
 
     .pill {
         display: inline-block;
-        background: rgba(255, 255, 255, 0.25);
-        color: white;
-        padding: 0.35rem 0.75rem;
-        border-radius: 20px;
-        font-size: 0.75rem;
+        background: rgba(0, 0, 0, 0.05);
+        color: var(--dark);
+        padding: 0.4rem 0.85rem;
+        border-radius: 25px;
+        font-size: 0.8rem;
         font-weight: 600;
         text-transform: capitalize;
-        border: 1px solid rgba(255, 255, 255, 0.5);
-        backdrop-filter: blur(10px);
+        border: 1.5px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .pill-species {
+        background: rgba(76, 175, 80, 0.15);
+        color: #2e7d32;
+        border-color: rgba(76, 175, 80, 0.4);
     }
 
     .pill-breed {
-        background: rgba(255, 184, 4, 0.3);
-        border-color: rgba(255, 184, 4, 0.8);
+        background: rgba(255, 184, 4, 0.15);
+        color: #f57f17;
+        border-color: rgba(255, 184, 4, 0.4);
     }
 
     .pill-age {
-        background: rgba(71, 154, 172, 0.3);
-        border-color: rgba(71, 154, 172, 0.8);
-    }
-
-    .pill-status {
-        background: rgba(76, 175, 80, 0.3);
-        border-color: rgba(76, 175, 80, 0.8);
+        background: rgba(71, 154, 172, 0.15);
+        color: #00838f;
+        border-color: rgba(71, 154, 172, 0.4);
     }
 
     .empty-state {
@@ -146,17 +213,21 @@
             width: 100%;
         }
 
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
         .pets-grid {
             grid-template-columns: 1fr;
             gap: 1.5rem;
         }
 
-        .pet-card {
-            min-height: 250px;
+        .pet-card-image {
+            height: 180px;
         }
 
-        .pet-card-overlay h3 {
-            font-size: 1.5rem;
+        .pet-card-name {
+            font-size: 1.4rem;
         }
     }
 </style>
@@ -169,23 +240,51 @@
         <a href="/pets/new" class="btn">➕ Add New Pet</a>
     </div>
 
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number">{{ pets|length }}</div>
+            <div class="stat-label">Total Pets</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ total_activities|default('0') }}</div>
+            <div class="stat-label">Activities Logged</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ current_user.role|capitalize }}</div>
+            <div class="stat-label">Account Type</div>
+        </div>
+    </div>
+
     {% if pets %}
     <div class="pets-grid">
         {% for pet in pets %}
         <a href="/pets/{{ pet.id }}" class="pet-card-link">
-            <div class="pet-card" style="{% if pet.image_filename %}background-image: url('{{ url_for('static', filename='uploads/pets/' + pet.image_filename) }}');{% else %}background: linear-gradient(135deg, #FF6B6B 0%, #FFB366 100%);{% endif %}">
-                <div class="pet-card-overlay">
-                    <div class="pet-card-header">
-                        <h3>{{ pet.name }}</h3>
-                        <div class="pet-pills">
-                            <span class="pill pill-status">{{ pet.species }}</span>
-                            {% if pet.breed %}
-                            <span class="pill pill-breed">{{ pet.breed }}</span>
-                            {% endif %}
-                            {% if pet.age is not none %}
-                            <span class="pill pill-age">{{ pet.age }} yr{{ 's' if pet.age != 1 else '' }}</span>
-                            {% endif %}
-                        </div>
+            <div class="pet-card">
+                <!-- Image Section -->
+                <div class="pet-card-image" style="{% if pet.image_filename %}background-image: url('{{ url_for('static', filename='uploads/pets/' + pet.image_filename) }}');{% endif %}">
+                    <div class="pet-icon-badge">
+                        {% if pet.species == 'dog' %}🐕
+                        {% elif pet.species == 'cat' %}🐈
+                        {% elif pet.species == 'bird' %}🦜
+                        {% elif pet.species == 'horse' %}🐴
+                        {% elif pet.species == 'fish' or pet.species == 'freshwater fish' %}🐠
+                        {% else %}🐾{% endif %}
+                    </div>
+                </div>
+
+                <!-- Content Section -->
+                <div class="pet-card-content">
+                    <h3 class="pet-card-name">{{ pet.name }}</h3>
+                    
+                    <div class="pet-pills">
+                        <span class="pill pill-species">{{ pet.species }}</span>
+                        {% if pet.breed %}
+                        <span class="pill pill-breed">{{ pet.breed }}</span>
+                        {% endif %}
+                        {% if pet.age is not none %}
+                        <span class="pill pill-age">{{ pet.age }} yr{{ 's' if pet.age != 1 else '' }}</span>
+                        {% endif %}
                     </div>
                 </div>
             </div>

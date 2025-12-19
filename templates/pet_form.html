@@ -62,10 +62,12 @@
     }
 
     .image-preview img {
-        max-width: 200px;
-        max-height: 200px;
-        border-radius: 10px;
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        border: 4px solid var(--primary);
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        object-fit: cover;
     }
 
     .image-preview-label {
@@ -201,7 +203,7 @@
                 {% if edit and pet.image_filename %}
                 <div class="image-preview">
                     <p style="margin: 0 0 0.5rem 0; color: var(--gray); font-size: 0.9rem;">Current photo:</p>
-                    <img src="/{{ pet.image_filename }}" alt="{{ pet.name }}">
+                    <img src="{{ url_for('static', filename='uploads/pets/' + pet.image_filename) }}" alt="{{ pet.name }}">
                     <p class="image-preview-label">Upload a new photo to replace it</p>
                 </div>
                 {% endif %}

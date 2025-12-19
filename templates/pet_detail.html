@@ -54,11 +54,12 @@
         padding: 0 2rem 2rem;
     }
 
+    /* Pet Header Card */
     .pet-header-info {
         background: white;
         border-radius: 20px;
         padding: 2rem;
-        margin: -80px 0 2rem 0;
+        margin: -80px 0 0 0;
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         position: relative;
         z-index: 10;
@@ -67,14 +68,17 @@
     .pet-name-section {
         display: flex;
         justify-content: space-between;
-        align-items: start;
+        align-items: flex-start;
         margin-bottom: 1.5rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--cream);
     }
 
     .pet-name-section h1 {
         font-size: 2.5rem;
-        margin: 0 0 0.5rem 0;
+        margin: 0;
         color: var(--dark);
+        line-height: 1.2;
     }
 
     .pet-badge {
@@ -87,56 +91,73 @@
         align-items: center;
         justify-content: center;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        flex-shrink: 0;
     }
 
     .pet-species {
-        font-size: 1rem;
+        font-size: 0.95rem;
         color: var(--gray);
         text-transform: capitalize;
+        margin: 0;
     }
 
-    .pet-info-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-        padding-bottom: 2rem;
+    /* Pills Section */
+    .pet-pills {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1.5rem;
         border-bottom: 1px solid var(--cream);
     }
 
-    .info-item {
-        text-align: center;
-    }
-
-    .info-label {
+    .pill {
+        display: inline-block;
+        background: rgba(0, 0, 0, 0.05);
+        color: var(--dark);
+        padding: 0.45rem 0.95rem;
+        border-radius: 25px;
         font-size: 0.85rem;
-        color: var(--gray);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 0.5rem;
+        font-weight: 600;
+        text-transform: capitalize;
+        border: 1.5px solid rgba(0, 0, 0, 0.1);
     }
 
-    .info-value {
-        font-size: 1.3rem;
-        font-weight: 700;
-        color: var(--primary);
+    .pill-species {
+        background: rgba(76, 175, 80, 0.15);
+        color: #2e7d32;
+        border-color: rgba(76, 175, 80, 0.4);
     }
 
-    .pet-quick-actions {
+    .pill-breed {
+        background: rgba(255, 184, 4, 0.15);
+        color: #f57f17;
+        border-color: rgba(255, 184, 4, 0.4);
+    }
+
+    .pill-age {
+        background: rgba(71, 154, 172, 0.15);
+        color: #00838f;
+        border-color: rgba(71, 154, 172, 0.4);
+    }
+
+    /* Action Bar */
+    .pet-actions-bar {
         display: flex;
-        gap: 1rem;
+        gap: 0.75rem;
         flex-wrap: wrap;
     }
 
-    .pet-quick-actions a {
+    .pet-actions-bar a {
         flex: 1;
-        min-width: 120px;
+        min-width: 140px;
         padding: 0.75rem 1.5rem;
         text-align: center;
         border-radius: 10px;
         text-decoration: none;
         font-weight: 600;
         transition: all 0.2s ease;
+        font-size: 0.95rem;
     }
 
     .action-primary {
@@ -147,6 +168,7 @@
     .action-primary:hover {
         background: #e6a500;
         transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(255, 184, 4, 0.3);
     }
 
     .action-secondary {
@@ -160,11 +182,23 @@
         color: white;
     }
 
+    .action-teal {
+        background: var(--teal);
+        color: white;
+    }
+
+    .action-teal:hover {
+        background: #3a8a9e;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(71, 154, 172, 0.3);
+    }
+
+    /* Content Sections */
     .section {
         background: white;
         border-radius: 20px;
         padding: 2rem;
-        margin-bottom: 2rem;
+        margin-top: 2rem;
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
     }
 
@@ -264,6 +298,11 @@
         color: var(--dark);
     }
 
+    .caretaker-username {
+        font-size: 0.9rem;
+        color: var(--gray);
+    }
+
     .status-badge {
         display: inline-block;
         padding: 0.35rem 0.75rem;
@@ -317,7 +356,7 @@
 
         .pet-header-info {
             padding: 1.5rem;
-            margin: -60px 0 1rem 0;
+            margin: -60px 0 0 0;
         }
 
         .pet-name-section {
@@ -335,23 +374,18 @@
             font-size: 2.5rem;
         }
 
-        .pet-info-grid {
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .pet-quick-actions {
+        .pet-actions-bar {
             flex-direction: column;
         }
 
-        .pet-quick-actions a {
+        .pet-actions-bar a {
             width: 100%;
+            min-width: auto;
         }
 
         .section {
             padding: 1.5rem;
-            margin-bottom: 1rem;
+            margin-top: 1.5rem;
         }
 
         .activity-item {
@@ -361,6 +395,12 @@
         .activity-meta {
             text-align: left;
             margin-top: 0.5rem;
+        }
+
+        .caretaker-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.75rem;
         }
     }
 </style>
@@ -384,7 +424,9 @@
 </div>
 
 <div class="pet-detail-container">
+    <!-- Header Card with Name, Pills, and Actions -->
     <div class="pet-header-info">
+        <!-- Name Section -->
         <div class="pet-name-section">
             <div>
                 <h1>{{ pet.name }}</h1>
@@ -400,32 +442,25 @@
             </div>
         </div>
 
-        <div class="pet-info-grid">
+        <!-- Pills Section -->
+        <div class="pet-pills">
+            <span class="pill pill-species">{{ pet.species }}</span>
             {% if pet.breed %}
-            <div class="info-item">
-                <div class="info-label">Breed</div>
-                <div class="info-value">{{ pet.breed }}</div>
-            </div>
+            <span class="pill pill-breed">{{ pet.breed }}</span>
             {% endif %}
-
             {% if pet.age is not none %}
-            <div class="info-item">
-                <div class="info-label">Age</div>
-                <div class="info-value">{{ pet.age }} yr{{ 's' if pet.age != 1 else '' }}</div>
-            </div>
+            <span class="pill pill-age">{{ pet.age }} yr{{ 's' if pet.age != 1 else '' }}</span>
             {% endif %}
-
             {% set activity_count = pet.activities|length %}
-            <div class="info-item">
-                <div class="info-label">Activities</div>
-                <div class="info-value">{{ activity_count }}</div>
-            </div>
+            <span class="pill" style="background: rgba(157, 39, 206, 0.15); color: #6a1b9a; border-color: rgba(157, 39, 206, 0.4);">{{ activity_count }} activities</span>
         </div>
 
-        <div class="pet-quick-actions">
+        <!-- Actions Bar -->
+        <div class="pet-actions-bar">
             <a href="/pets/{{ pet.id }}/activities/new" class="action-primary">📝 Mark Activity</a>
             {% if current_user.id == pet.owner_id %}
             <a href="/pets/{{ pet.id }}/edit" class="action-secondary">✏️ Edit Pet</a>
+            <a href="/pets/{{ pet.id }}/caretakers/add" class="action-teal">👥 Add Caretaker</a>
             {% endif %}
         </div>
     </div>
@@ -475,7 +510,7 @@
         {% else %}
         <div class="empty-message">
             <p>No activities logged yet</p>
-            <a href="/pets/{{ pet.id }}/activities/new" class="action-primary" style="display: inline-block; margin-top: 1rem;">Log First Activity</a>
+            <a href="/pets/{{ pet.id }}/activities/new" class="action-primary" style="display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem;">Log First Activity</a>
         </div>
         {% endif %}
     </div>
@@ -492,7 +527,7 @@
                 <div>
                     <div class="caretaker-email">{{ caretaker.email }}</div>
                     {% if caretaker.user_id %}
-                    <div style="font-size: 0.9rem; color: var(--gray);">@{{ caretaker.user.username if caretaker.user else 'Pending' }}</div>
+                    <div class="caretaker-username">@{{ caretaker.user.username if caretaker.user else 'Pending' }}</div>
                     {% endif %}
                 </div>
                 <span class="status-badge status-{{ caretaker.status }}">{{ caretaker.status }}</span>
@@ -500,7 +535,7 @@
             {% endfor %}
         </div>
         {% else %}
-        <p style="color: var(--gray);">No caretakers added yet</p>
+        <p style="color: var(--gray);">No caretakers added yet. <a href="/pets/{{ pet.id }}/caretakers/add">Add one →</a></p>
         {% endif %}
 
         <a href="/pets/{{ pet.id }}/caretakers/add" class="add-caretaker-btn">➕ Add Caretaker</a>

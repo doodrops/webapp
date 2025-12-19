@@ -97,6 +97,22 @@
             opacity: 0.8;
         }
 
+        nav a {
+            position: relative;
+            transition: color 0.2s ease;
+        }
+
+       nav a.active {
+            color: white;
+            font-weight: 600;
+            border-bottom: none;
+            padding-bottom: 5px;
+            text-decoration: underline;
+            text-decoration-color: white;
+            text-decoration-thickness: 3px;
+            text-underline-offset: 8px;
+        }
+
         .nav-user {
             display: flex;
             align-items: center;
@@ -342,17 +358,16 @@
         </a>
         <nav>
             {% if current_user.is_authenticated %}
-                <a href="/dashboard">Dashboard</a>
-                <a href="/pets">My Pets</a>
-                <div class="nav-user">
-                    <span>👤 {{ current_user.username }}</span>
-                    <form method="POST" action="/logout" style="display: inline;">
-                        <button type="submit">Logout</button>
-                    </form>
-                </div>
+            <a href="/pets" {% if request.endpoint == 'pets_list' %}class="active"{% endif %}>Home</a>
+            <div class="nav-user">
+                <span><a href="/account" {% if request.endpoint == 'account' %}class="active"{% endif %}>{{ current_user.username }}</a></span>
+                <form method="POST" action="/logout" style="display: inline;">
+                    <button type="submit">Logout</button>
+                </form>
+            </div>
             {% else %}
-                <a href="/login">Login</a>
-                <a href="/register">Sign Up</a>
+            <a href="/login" {% if request.endpoint == 'login' %}class="active"{% endif %}>Login</a>
+            <a href="/register" {% if request.endpoint == 'register' %}class="active"{% endif %}>Sign Up</a>
             {% endif %}
         </nav>
     </header>

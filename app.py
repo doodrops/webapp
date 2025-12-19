@@ -79,6 +79,10 @@ class User(UserMixin, db.Model):
     activities = db.relationship('Activity', backref='user', lazy=True)
     caretaker_assignments = db.relationship('Caretaker', backref='user', lazy=True)
     
+    avatar_filename = db.Column(db.String(255))
+    location = db.Column(db.String(120))
+    bio = db.Column(db.Text)
+    
     def set_password(self, password):
         """Hash and set password"""
         # Use pbkdf2 for better Python 3.9 compatibility (scrypt needs special OpenSSL setup)
@@ -387,7 +391,7 @@ def logout():
 def index():
     """Home page"""
     if current_user.is_authenticated:
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('pets_list'))
     return redirect(url_for('login'))
 
 
@@ -745,6 +749,158 @@ def get_user_pets():
     pets = current_user.get_all_pets()
     return jsonify([p.to_dict() for p in pets])
 
+# ============================================================================
+# ROUTES - ACCOUNT
+# ============================================================================
+
+@app.route('/account', methods=['GET', 'POST'])
+@login_required
+def account():
+    """User account/profile page"""
+    if request.method == 'POST':
+        action = request.form.get('action')
+        
+        try:
+            if action == 'upload_avatar':
+                # Handle avatar upload
+                if 'avatar' in request.files:
+                    file = request.files['avatar']
+                    if file and allowed_file(file.filename):
+                        # Delete old avatar if exists
+                        if current_user.avatar_filename:
+                            old_path = os.path.join(app.config['UPLOAD_FOLDER'].replace('pets', 'avatars'), current_user.avatar_filename)
+                            if os.path.exists(old_path):
+                                os.remove(old_path)
+                        
+                        # Create avatars folder if needed
+                        avatar_folder = os.path.join('static', 'uploads', 'avatars')
+                        os.makedirs(avatar_folder, exist_ok=True)
+                        
+                        # Save new avatar
+                        ext = file.filename.rsplit('.', 1)[1].lower()
+                        filename = f'avatar_{current_user.id}.{ext}'
+                        filepath = os.path.join(avatar_folder, filename)
+                        file.save(filepath)
+                        
+                        current_user.avatar_filename = filename
+                        db.session.commit()
+                        flash('Avatar updated successfully!', 'success')
+                
+            elif action == 'update_profile':
+                # Handle profile update
+                username = request.form.get('username', '').strip()
+                email = request.form.get('email', '').strip().lower()
+                location = request.form.get('location', '').strip()
+                bio = request.form.get('bio', '').strip()
+                
+                # Validate username
+                if not username:
+                    flash('Username is required', 'error')
+                    return redirect(url_for('account'))
+                
+                # Check if username already exists (and it's not their own)
+                existing_user = User.query.filter_by(username=username).first()
+                if existing_user and existing_user.id != current_user.id:
+                    flash('Username already taken', 'error')
+                    return redirect(url_for('account'))
+                
+                # Check if email already exists (and it's not their own)
+                existing_email = User.query.filter_by(email=email).first()
+                if existing_email and existing_email.id != current_user.id:
+                    flash('Email already in use', 'error')
+                    return redirect(url_for('account'))
+                
+                # Validate email
+                if not email or '@' not in email:
+                    flash('Valid email is required', 'error')
+                    return redirect(url_for('account'))
+                
+                # Update profile
+                current_user.username = username
+                current_user.email = email
+                current_user.location = location
+                current_user.bio = bio
+                
+                db.session.commit()
+                flash('Profile updated successfully!', 'success')
+                return redirect(url_for('account'))
+        
+        except Exception as e:
+            db.session.rollback()
+            print(f"❌ Account update error: {e}")
+            flash(f'Error updating account: {str(e)}', 'error')
+            return redirect(url_for('account'))
+    
+    return render_template('account.html')
+
+
+@app.route('/account/change-password', methods=['GET', 'POST'])
+@login_required
+def change_password():
+    """Change user password"""
+    if request.method == 'POST':
+        try:
+            current_password = request.form.get('current_password', '')
+            new_password = request.form.get('new_password', '')
+            confirm_password = request.form.get('confirm_password', '')
+            
+            # Validate current password
+            if not current_user.check_password(current_password):
+                flash('Current password is incorrect', 'error')
+                return redirect(url_for('change_password'))
+            
+            # Validate new password
+            if not new_password or len(new_password) < 6:
+                flash('New password must be at least 6 characters', 'error')
+                return redirect(url_for('change_password'))
+            
+            # Validate passwords match
+            if new_password != confirm_password:
+                flash('New passwords do not match', 'error')
+                return redirect(url_for('change_password'))
+            
+            # Update password
+            current_user.set_password(new_password)
+            db.session.commit()
+            
+            flash('Password changed successfully!', 'success')
+            return redirect(url_for('account'))
+        
+        except Exception as e:
+            db.session.rollback()
+            print(f"❌ Password change error: {e}")
+            flash(f'Error changing password: {str(e)}', 'error')
+            return redirect(url_for('change_password'))
+    
+    return render_template('change_password.html')
+
+# ============================================================================
+# ROUTES - PASSWORD RESET
+# ============================================================================
+
+@app.route('/forgot-password', methods=['GET', 'POST'])
+def forgot_password():
+    """Password reset request page"""
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard'))
+    
+    if request.method == 'POST':
+        email = request.form.get('email', '').strip().lower()
+        
+        user = User.query.filter_by(email=email).first()
+        
+        if user:
+            # TODO: In production, send password reset email with token
+            # For now, just redirect to change password page after verification
+            flash('If an account exists with that email, you will receive password reset instructions.', 'info')
+            # In production: send_password_reset_email(user)
+        else:
+            # Security: Don't reveal if email exists
+            flash('If an account exists with that email, you will receive password reset instructions.', 'info')
+        
+        return redirect(url_for('login'))
+    
+    return render_template('forgot_password.html')
 
 # ============================================================================
 # ERROR HANDLERS
